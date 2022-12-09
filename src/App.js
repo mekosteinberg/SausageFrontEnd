@@ -2,9 +2,23 @@ import React from 'react';
 import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, Grid, Paper, Stack, Toolbar, Typography } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CameraIcon from '@mui/icons-material/PhotoCamera';
+import Rating from '@mui/material/Rating';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { styled } from '@mui/material/styles';
 
-
+//theme for footer
 const theme = createTheme();
+
+//for the ratings portion of the card
+const StyledRating = styled(Rating)({
+  '& .MuiRating-iconFilled': {
+    color: '#ff6d75',
+  },
+  '& .MuiRating-iconHover': {
+    color: '#ff3d47',
+  },
+});
 
 const App = () => {
   return (
@@ -68,6 +82,15 @@ const App = () => {
                       Description:
                     </Typography>
                   </CardContent>
+                  <StyledRating
+                    sx={{ p: 2 }}
+                    name="customized-color"
+                    defaultValue={2}
+                    // getLabelText={(value: number) => `${value} Heart${value !== 1 ? 's' : ''}`}
+                    precision={0.5}
+                    icon={<FavoriteIcon fontSize="inherit" />}
+                    emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
+                  />
                   <CardActions>
                     <Button size="small">View</Button>
                     <Button size="small">Edit</Button>
