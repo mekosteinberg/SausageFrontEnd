@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, Grid, Paper, Stack, Toolbar, Typography } from '@mui/material';
+import axios from 'axios';
+import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, FormGroup, Grid, Paper, Stack, TextField, Toolbar, Typography } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CameraIcon from '@mui/icons-material/PhotoCamera';
 import Rating from '@mui/material/Rating';
@@ -33,6 +34,13 @@ const App = () => {
   //-----------------
   const [sausages, setSausages] = useState([])
   const [addSausage, setaddSausage] = useState([])
+
+  const [sausageTitle, setSausageTitle] = useState('')
+  const [sausageDate, setSausageDate] = useState('')
+  const [sausageImage, setSausageImage] = useState('')
+  const [sausageComments, setSausageComments] = useState('')
+  const [sausageId, setSausageId] = useState('')
+
   //-----------------
   // NAV Buttons
   //-----------------
@@ -56,6 +64,39 @@ const App = () => {
     setAreDrinksVisible(true)
   }
 
+  //Handle Change and Submit Forms/Buttons
+  const handleChange = (setState) => (event) => {
+    setState(event.target.value)
+  }
+
+  const handleNewSausageFormSubmit = (event) => {
+    // console.log('submit')
+    event.preventDefault()
+    axios
+      .post('http://localhost:3000/sausage', {
+        title: sausageTitle,
+        date: sausageDate,
+        image: sausageImage,
+        comments: sausageComments
+      })
+      .then(() => {
+        resetForm()
+        axios
+          .get('http://localhost:3000/sausage')
+          .then((response) => {
+            setSausages(response.data)
+          })
+      })
+  }
+
+
+  const resetForm = () => {
+    setSausageTitle('')
+    setSausageDate('')
+    setSausageImage('')
+    setSausageComments('')
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -72,11 +113,7 @@ const App = () => {
         <main>
           {/* Hero unit */}
           <Box
-            sx={{
-              bgcolor: 'background.paper',
-              pt: 8,
-              pb: 6,
-            }}
+            sx={{ bgcolor: 'background.paper', pt: 8, pb: 6 }}
           >
             <Container maxWidth="sm">
               <Typography
@@ -85,18 +122,11 @@ const App = () => {
                 align="center"
                 color="text.primary"
                 gutterBottom
-              >
-                Brat Time
-              </Typography>
+              >Brat Time</Typography>
               <Typography variant="h5" align="center" color="text.secondary" paragraph>
                 Its Octoberfest! Everyone loves to take pics of their food, here's a way to rate your Octoberfest Feasts! Upload pics, say how it was and rate it 1-5 stars. Dont forget to check out the beverages section to find your perfect pairing!
               </Typography>
-              <Stack
-                sx={{ pt: 4 }}
-                direction="row"
-                spacing={2}
-                justifyContent="center"
-              >
+              <Stack sx={{ pt: 4 }} direction="row" spacing={2} justifyContent="center" >
                 <Button variant={areSausagesVisible ? "contained" : "outlined"} onClick={showSausages}>The Goods</Button>
                 <Button variant={isAddSausageVisible ? "contained" : "outlined"} onClick={showAddSausages}>Rate your own!</Button>
                 <Button variant={areDrinksVisible ? "contained" : "outlined"} onClick={showDrinks}>Perfect Pairings</Button>
@@ -130,6 +160,55 @@ const App = () => {
                     </CardActions>
                   </Card>
                 </Grid>
+              }
+            </Grid>
+
+            <Grid align="center">
+              {isAddSausageVisible
+                &&
+                <Paper align="left" sx={{ width: { sm: 750 }, m: 1 }} elevation={4}>
+                  <FormGroup>
+                    <Typography sx={{ mt: 2, p: 2 }} variant="h4"><strong>You BRAT your Sausage!</strong></Typography>
+                    <form onSubmit={handleNewSausageFormSubmit}>
+                      <TextField
+                        sx={{ m: 1, p: 1 }}
+                        onChange={handleChange(setSausageTitle)}
+                        id="outlined-basic"
+                        label="Type of Meat"
+                        variant="outlined"
+                        value={sausageTitle} />
+                      <TextField
+                        sx={{ m: 1, p: 1 }}
+                        onChange={handleChange(setSausageDate)}
+                        id="outlined-basic"
+                        label="Date"
+                        variant="outlined"
+                        value={sausageDate} />
+                      <TextField sx={{ width: 700, m: 1, p: 1 }}
+                        onChange={handleChange(setSausageImage)}
+                        multiline maxRows={2}
+                        id="outlined-multiline-flexible"
+                        label="Image Link"
+                        variant="outlined"
+                        value={sausageImage} /><br />
+                      <TextField
+                        sx={{ width: 700, m: 1, p: 1 }}
+                        rows={4}
+                        multiline maxRows={8}
+                        onChange={handleChange(setSausageComments)}
+                        id="outlined-multiline-flexible"
+                        label="Comments"
+                        variant="outlined"
+                        value={sausageComments} /><br />
+                      <Button
+                        sx={{ m: 2 }}
+                        variant="contained"
+                        type="submit"
+                        color="success"
+                      >Submit your Meat</Button>
+                    </form>
+                  </FormGroup>
+                </Paper>
               }
             </Grid>
           </Container>
