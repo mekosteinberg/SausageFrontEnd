@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, Grid, Paper, Stack, Toolbar, Typography } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CameraIcon from '@mui/icons-material/PhotoCamera';
@@ -7,10 +7,9 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { styled } from '@mui/material/styles';
 
-//theme for footer
-const theme = createTheme();
-
-//for the ratings portion of the card
+//-----------------
+//Ratings portion of the Sausage Card
+//-----------------
 const StyledRating = styled(Rating)({
   '& .MuiRating-iconFilled': {
     color: '#ff6d75',
@@ -20,7 +19,43 @@ const StyledRating = styled(Rating)({
   },
 });
 
+//-----------------
+//Footer Theme
+//-----------------
+const theme = createTheme();
+//-----------------
+// PAGE CONTENT
+//-----------------
 const App = () => {
+
+  //-----------------
+  // Setup UseState
+  //-----------------
+  const [sausages, setSausages] = useState([])
+  const [addSausage, setaddSausage] = useState([])
+  //-----------------
+  // NAV Buttons
+  //-----------------
+  const [areSausagesVisible, setAreSausagesVisible] = useState(true)
+  const [isAddSausageVisible, setAddSausageVisible] = useState(false)
+  const [areDrinksVisible, setAreDrinksVisible] = useState(false)
+
+  const showSausages = () => {
+    setAreSausagesVisible(true)
+    setAddSausageVisible(false)
+    setAreDrinksVisible(false)
+  }
+  const showAddSausages = () => {
+    setAreSausagesVisible(false)
+    setAddSausageVisible(true)
+    setAreDrinksVisible(false)
+  }
+  const showDrinks = () => {
+    setAreSausagesVisible(false)
+    setAddSausageVisible(false)
+    setAreDrinksVisible(true)
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -62,41 +97,40 @@ const App = () => {
                 spacing={2}
                 justifyContent="center"
               >
-                <Button variant="contained">Rate your own!</Button>
-                <Button variant="outlined">Perfect Pairings</Button>
+                <Button variant={areSausagesVisible ? "contained" : "outlined"} onClick={showSausages}>The Goods</Button>
+                <Button variant={isAddSausageVisible ? "contained" : "outlined"} onClick={showAddSausages}>Rate your own!</Button>
+                <Button variant={areDrinksVisible ? "contained" : "outlined"} onClick={showDrinks}>Perfect Pairings</Button>
               </Stack>
             </Container>
           </Box>
           <Container sx={{ py: 8 }} maxWidth="md">
 
             <Grid container spacing={4}>
-
-              <Grid xs={12} sm={6} md={4}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <CardMedia component="img" sx={{ p: 2 }} image="" alt="random" />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      Sausage
-                    </Typography>
-                    <Typography>
-                      Description:
-                    </Typography>
-                  </CardContent>
-                  <StyledRating
-                    sx={{ p: 2 }}
-                    name="customized-color"
-                    defaultValue={2}
-                    // getLabelText={(value: number) => `${value} Heart${value !== 1 ? 's' : ''}`}
-                    precision={0.5}
-                    icon={<FavoriteIcon fontSize="inherit" />}
-                    emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-                  />
-                  <CardActions>
-                    <Button size="small">View</Button>
-                    <Button size="small">Edit</Button>
-                  </CardActions>
-                </Card>
-              </Grid>
+              {areSausagesVisible &&
+                <Grid xs={12} sm={6} md={4}>
+                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <CardMedia component="img" sx={{ p: 2 }} image="" alt="random" />
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Typography gutterBottom variant="h5" component="h2">
+                        Sausage
+                      </Typography>
+                      <Typography>
+                        Description:
+                      </Typography>
+                    </CardContent>
+                    <StyledRating sx={{ p: 2 }} name="customized-color" defaultValue={2}
+                      // getLabelText={(value: number) => `${value} Heart${value !== 1 ? 's' : ''}`}
+                      precision={0.5}
+                      icon={<FavoriteIcon fontSize="inherit" />}
+                      emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
+                    />
+                    <CardActions>
+                      <Button size="small">View</Button>
+                      <Button size="small">Edit</Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              }
             </Grid>
           </Container>
         </main>
