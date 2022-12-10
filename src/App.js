@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, FormGroup, Grid, Paper, Stack, TextField, Toolbar, Typography } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -33,7 +33,7 @@ const App = () => {
   // Setup UseState
   //-----------------
   const [sausages, setSausages] = useState([])
-  const [addSausage, setaddSausage] = useState([])
+  const [addSausage, setAddSausage] = useState([])
 
   const [sausageType, setSausageType] = useState('')
   const [sausageImage, setSausageImage] = useState('')
@@ -94,6 +94,13 @@ const App = () => {
     setSausageComments('')
   }
 
+  useEffect(() => {
+    axios.get('http://rate-my-brat-api.herokuapp.com/api/sausages/').then((response) => {
+      setSausages(response.data)
+      setAddSausage(response.data)
+    })
+  })
+
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -133,31 +140,35 @@ const App = () => {
           <Container sx={{ py: 8 }} maxWidth="md">
 
             <Grid container spacing={4}>
-              {areSausagesVisible &&
-                <Grid xs={12} sm={6} md={4}>
-                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <CardMedia component="img" sx={{ p: 2 }} image="" alt="random" />
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        Sausage
-                      </Typography>
-                      <Typography>
-                        Comments:
-                      </Typography>
-                    </CardContent>
-                    <StyledRating sx={{ p: 2 }} name="customized-color" defaultValue={2}
-                      // getLabelText={(value: number) => `${value} Heart${value !== 1 ? 's' : ''}`}
-                      precision={0.5}
-                      icon={<FavoriteIcon fontSize="inherit" />}
-                      emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-                    />
-                    <CardActions>
-                      <Button size="small">View</Button>
-                      <Button size="small">Edit</Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              }
+              {areSausagesVisible
+                && sausages.map((sausage, index) => {
+                  return (
+                    <Grid xs={12} sm={6} md={4}>
+                      <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        <CardMedia component="img" sx={{ p: 2 }} image={sausage.image} />
+                        <CardContent sx={{ flexGrow: 1 }}>
+                          <Typography gutterBottom variant="h5" component="h2">
+                            Type: {sausage.type}
+                          </Typography>
+                          <Typography>
+                            Comments: {sausage.description}
+                          </Typography>
+                        </CardContent>
+                        <StyledRating sx={{ p: 2 }} name="customized-color" defaultValue={2}
+                          getLabelText={(value: number) => `${value} Heart${value !== 1 ? 's' : ''}`}
+                          precision={0.5}
+                          icon={<FavoriteIcon fontSize="inherit" />}
+                          emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
+                        />
+                        <CardActions>
+                          <Button size="small">View</Button>
+                          <Button size="small">Edit</Button>
+                        </CardActions>
+                      </Card>
+                    </Grid>
+                  )
+                }
+                )}
             </Grid>
 
             <Grid align="center">
