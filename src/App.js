@@ -72,13 +72,14 @@ const App = () => {
     // console.log('submit')
     event.preventDefault()
     axios
-      .post('http://rate-my-brat-api.herokuapp.com/api/sausages', {
+      .post('http://rate-my-brat-api.herokuapp.com/api/sausages/new', {
         image: sausageImage,
         type: sausageType,
         description: sausageComments,
       })
       .then(() => {
         resetForm()
+        showSausages()
         axios
           .get('http://rate-my-brat-api.herokuapp.com/api/sausages')
           .then((response) => {
@@ -86,7 +87,6 @@ const App = () => {
           })
       })
   }
-
 
   const resetForm = () => {
     setSausageType('')
