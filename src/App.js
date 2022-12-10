@@ -35,8 +35,7 @@ const App = () => {
   const [sausages, setSausages] = useState([])
   const [addSausage, setaddSausage] = useState([])
 
-  const [sausageTitle, setSausageTitle] = useState('')
-  const [sausageDate, setSausageDate] = useState('')
+  const [sausageType, setSausageType] = useState('')
   const [sausageImage, setSausageImage] = useState('')
   const [sausageComments, setSausageComments] = useState('')
   const [sausageId, setSausageId] = useState('')
@@ -73,26 +72,24 @@ const App = () => {
     // console.log('submit')
     event.preventDefault()
     axios
-      .post('http://localhost:3000/sausage', {
-        title: sausageTitle,
-        date: sausageDate,
+      .post('http://rate-my-brat-api.herokuapp.com/api/sausages/new', {
         image: sausageImage,
-        comments: sausageComments
+        type: sausageType,
+        description: sausageComments,
       })
       .then(() => {
         resetForm()
+        showSausages()
         axios
-          .get('http://localhost:3000/sausage')
+          .get('http://rate-my-brat-api.herokuapp.com/api/sausages')
           .then((response) => {
             setSausages(response.data)
           })
       })
   }
 
-
   const resetForm = () => {
-    setSausageTitle('')
-    setSausageDate('')
+    setSausageType('')
     setSausageImage('')
     setSausageComments('')
   }
@@ -145,7 +142,7 @@ const App = () => {
                         Sausage
                       </Typography>
                       <Typography>
-                        Description:
+                        Comments:
                       </Typography>
                     </CardContent>
                     <StyledRating sx={{ p: 2 }} name="customized-color" defaultValue={2}
@@ -172,18 +169,11 @@ const App = () => {
                     <form onSubmit={handleNewSausageFormSubmit}>
                       <TextField
                         sx={{ m: 1, p: 1 }}
-                        onChange={handleChange(setSausageTitle)}
+                        onChange={handleChange(setSausageType)}
                         id="outlined-basic"
                         label="Type of Meat"
                         variant="outlined"
-                        value={sausageTitle} />
-                      <TextField
-                        sx={{ m: 1, p: 1 }}
-                        onChange={handleChange(setSausageDate)}
-                        id="outlined-basic"
-                        label="Date"
-                        variant="outlined"
-                        value={sausageDate} />
+                        value={sausageType} />
                       <TextField sx={{ width: 700, m: 1, p: 1 }}
                         onChange={handleChange(setSausageImage)}
                         multiline maxRows={2}
