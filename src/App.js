@@ -20,6 +20,8 @@ const StyledRating = styled(Rating)({
   },
 });
 
+const client = axios.create({ baseURL: 'https://rate-my-brat-api.herokuapp.com/api'})
+
 //-----------------
 //Footer Theme
 //-----------------
@@ -71,8 +73,8 @@ const App = () => {
   const handleNewSausageFormSubmit = (event) => {
     // console.log('submit')
     event.preventDefault()
-    axios
-      .post('http://rate-my-brat-api.herokuapp.com/api/sausages/new', {
+    client
+      .post('/sausages/new', {
         image: sausageImage,
         type: sausageType,
         description: sausageComments,
@@ -80,8 +82,8 @@ const App = () => {
       .then(() => {
         resetForm()
         showSausages()
-        axios
-          .get('http://rate-my-brat-api.herokuapp.com/api/sausages')
+        client
+          .get('/sausages')
           .then((response) => {
             setSausages(response.data)
           })
@@ -95,11 +97,11 @@ const App = () => {
   }
 
   useEffect(() => {
-    axios.get('http://rate-my-brat-api.herokuapp.com/api/sausages/').then((response) => {
+    client.get('/sausages').then((response) => {
       setSausages(response.data)
       setAddSausage(response.data)
     })
-  })
+  }, [])
 
   return (
     <ThemeProvider theme={theme}>
