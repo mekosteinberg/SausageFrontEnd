@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, FormGroup, Grid, Paper, Stack, TextField, Toolbar, Typography } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, FormGroup, Grid, Modal, Paper, Stack, TextField, Toolbar, Typography } from '@mui/material';
+import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import CameraIcon from '@mui/icons-material/PhotoCamera';
 import Rating from '@mui/material/Rating';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { styled } from '@mui/material/styles';
 
+//from MUI Modal docs
+const modalstyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 2,
+};
 
 //-----------------
 //Ratings portion of the Sausage Card
@@ -28,6 +39,8 @@ const client = axios.create({ baseURL: 'https://rate-my-brat-api.herokuapp.com/a
 //Footer Theme
 //-----------------
 const theme = createTheme();
+
+
 //-----------------
 // PAGE CONTENT
 //-----------------
@@ -94,6 +107,62 @@ const App = () => {
       })
   }
 
+  //----------------
+  //EDIT Sausage Input
+  //----------------
+  const [showModal, setShowModal] = useState(false)
+
+  const editSausage = (sausage) => () => {
+    setShowModal(true)
+    setSausageType(sausage.type)
+    setSausageImage(sausage.image)
+    setSausageComments(sausage.description)
+    setSausageRatings(sausage.ratings)
+    setSausageId(sausage._id)
+  }
+
+  const handleEditFormSubmit = (event) => {
+    event.preventDefault(
+      client
+        .put('/sausages/' + sausageId, {
+          type: sausageType,
+          image: sausageImage,
+          description: sausageComments,
+          ratings: sausageRatings
+        })
+        .then(() => {
+          resetForm()
+          setShowModal(false)
+          client
+            .get('/sausages')
+            .then((response) => {
+              setSausages(response.data)
+            })
+        })
+    )
+  }
+
+  //----------------
+  //DELETE Sausage Input
+  //----------------
+  const deleteSausage = (event) => {
+    event.preventDefault()
+    client
+      .delete('/sausages/' + sausageId)
+      .then(() => {
+        client
+          .get('/sausages')
+          .then((response) => {
+            setSausages(response.data)
+            showSausages()
+            setShowModal(false)
+          })
+      })
+  }
+
+  //----------------
+  //RESET Form Input
+  //----------------
   const resetForm = () => {
     setSausageType('')
     setSausageImage('')
@@ -150,9 +219,11 @@ const App = () => {
               {areSausagesVisible
                 && sausages.map((sausage, index) => {
                   return (
-                    <Grid item xs={12} sm={6} md={4}>
-                      <Card sx={{ my: 1, height: '100%', display: 'flex', flexDirection: 'column' }} elevation={6} key={sausage._id}>
-                        <CardMedia component="img" sx={{ m: 1, p: 1 }} image={sausage.image} />
+                    <Grid item xs={12} sm={6} md={4} key={sausage._id}>
+                      <Card sx={{ my: 1, height: '100%', display: 'flex', flexDirection: 'column' }} elevation={6} >
+                        <CardMedia component="img" sx={{ m: 1, p: 1 }}
+                          image={sausage.image}
+                        />
                         <CardContent sx={{ flexGrow: 1 }}>
                           <Typography gutterBottom variant="h5" component="h2">{sausage.type}</Typography>
                           <Typography sx={{ mb: 2 }}><strong>Comments: </strong> {sausage.description}</Typography>
@@ -167,11 +238,8 @@ const App = () => {
                             readOnly
                           />
                         </CardContent>
-
-
                         <CardActions>
-                          <Button size="small">View</Button>
-                          <Button size="small">Edit</Button>
+                          <Button size="small" onClick={editSausage(sausage)}>Edit</Button>
                         </CardActions>
                       </Card>
                     </Grid>
@@ -234,6 +302,63 @@ const App = () => {
               }
             </Grid>
           </Container>
+
+          <Modal
+            open={showModal}
+            onClose={() => { setShowModal(false) }}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={modalstyle}>
+              <FormGroup>
+                <Typography sx={{ mt: 2, p: 2 }} variant="h5"><strong>Edit</strong></Typography>
+                <form onSubmit={handleEditFormSubmit}>
+                  <TextField
+                    sx={{ m: 1, p: 1 }}
+                    onChange={handleChange(setSausageType)}
+                    id="outlined-basic"
+                    label="Type"
+                    variant="outlined"
+                    value={sausageType} />
+                  <TextField
+                    sx={{ m: 1, p: 1 }}
+                    onChange={handleChange(setSausageImage)}
+                    id="outlined-basic"
+                    label="image"
+                    variant="outlined"
+                    value={sausageImage} />
+                  <TextField sx={{ width: 500, m: 1, p: 1 }}
+                    onChange={handleChange(setSausageComments)}
+                    id="outlined-multiline-flexible"
+                    multiline maxRows={2}
+                    label="Comments"
+                    variant="outlined"
+                    value={sausageComments} />
+
+                  <Typography sx={{ p: 2 }} variant="h6">Rating
+                    <StyledRating sx={{ p: 2 }}
+                      name="customized-color"
+                      onChange={handleChange(setSausageRatings)}
+                      defaultValue={2}
+                      getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
+                      precision={0.5}
+                      icon={<FavoriteIcon fontSize="inherit" />}
+                      emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
+                      value={sausageRatings}
+                    />
+                  </Typography>
+                  <Button
+                    sx={{ m: 2 }}
+                    variant="contained"
+                    type="submit"
+                    color="success"
+                  >Submit</Button>
+                  <Button size="small" onClick={deleteSausage}>Delete</Button>
+                </form>
+              </FormGroup>
+            </Box>
+          </Modal>
+
         </main>
         <Box
           component="footer"
