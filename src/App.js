@@ -8,9 +8,11 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { styled } from '@mui/material/styles';
 
+
 //-----------------
 //Ratings portion of the Sausage Card
 //-----------------
+const getLabelText = (value) => `${value} Heart${value !== 1 ? 's' : ''}`
 const StyledRating = styled(Rating)({
   '& .MuiRating-iconFilled': {
     color: '#ff6d75',
@@ -20,7 +22,7 @@ const StyledRating = styled(Rating)({
   },
 });
 
-const client = axios.create({ baseURL: 'https://rate-my-brat-api.herokuapp.com/api'})
+const client = axios.create({ baseURL: 'https://rate-my-brat-api.herokuapp.com/api' })
 
 //-----------------
 //Footer Theme
@@ -41,6 +43,7 @@ const App = () => {
   const [sausageImage, setSausageImage] = useState('')
   const [sausageComments, setSausageComments] = useState('')
   const [sausageId, setSausageId] = useState('')
+  const [sausageRatings, setSausageRatings] = useState('')
 
   //-----------------
   // NAV Buttons
@@ -78,6 +81,7 @@ const App = () => {
         image: sausageImage,
         type: sausageType,
         description: sausageComments,
+        ratings: sausageRatings
       })
       .then(() => {
         resetForm()
@@ -94,6 +98,7 @@ const App = () => {
     setSausageType('')
     setSausageImage('')
     setSausageComments('')
+    setSausageRatings('')
   }
 
   useEffect(() => {
@@ -145,23 +150,25 @@ const App = () => {
               {areSausagesVisible
                 && sausages.map((sausage, index) => {
                   return (
-                    <Grid xs={12} sm={6} md={4}>
-                      <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                        <CardMedia component="img" sx={{ p: 2 }} image={sausage.image} />
+                    <Grid item xs={12} sm={6} md={4}>
+                      <Card sx={{ my: 1, height: '100%', display: 'flex', flexDirection: 'column' }} elevation={6} key={sausage._id}>
+                        <CardMedia component="img" sx={{ m: 1, p: 1 }} image={sausage.image} />
                         <CardContent sx={{ flexGrow: 1 }}>
-                          <Typography gutterBottom variant="h5" component="h2">
-                            Type: {sausage.type}
-                          </Typography>
-                          <Typography>
-                            Comments: {sausage.description}
-                          </Typography>
+                          <Typography gutterBottom variant="h5" component="h2">{sausage.type}</Typography>
+                          <Typography sx={{ mb: 2 }}><strong>Comments: </strong> {sausage.description}</Typography>
+                          <Typography>{getLabelText(sausage.ratings)}</Typography>
+                          <StyledRating sx={{}}
+                            name="customized-color"
+                            value={sausage.ratings}
+                            getLabelText={getLabelText}
+                            precision={0.5}
+                            icon={<FavoriteIcon fontSize="inherit" />}
+                            emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
+                            readOnly
+                          />
                         </CardContent>
-                        <StyledRating sx={{ p: 2 }} name="customized-color" defaultValue={2}
-                          // getLabelText={(value:"number") => `${value} Heart${value !== 1 ? 's' : ''}`}
-                          precision={0.5}
-                          icon={<FavoriteIcon fontSize="inherit" />}
-                          emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-                        />
+
+
                         <CardActions>
                           <Button size="small">View</Button>
                           <Button size="small">Edit</Button>
@@ -203,6 +210,18 @@ const App = () => {
                         label="Comments"
                         variant="outlined"
                         value={sausageComments} /><br />
+                      <Typography sx={{ p: 2 }} variant="h6">Rating
+                        <StyledRating sx={{ p: 2 }}
+                          name="customized-color"
+                          onChange={handleChange(setSausageRatings)}
+                          defaultValue={2}
+                          getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
+                          precision={0.5}
+                          icon={<FavoriteIcon fontSize="inherit" />}
+                          emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
+                          value={sausageRatings}
+                        />
+                      </Typography>
                       <Button
                         sx={{ m: 2 }}
                         variant="contained"
