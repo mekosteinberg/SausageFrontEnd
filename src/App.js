@@ -150,9 +150,11 @@ const App = () => {
               {areSausagesVisible
                 && sausages.map((sausage, index) => {
                   return (
-                    <Grid item xs={12} sm={6} md={4}>
-                      <Card sx={{ my: 1, height: '100%', display: 'flex', flexDirection: 'column' }} elevation={6} key={sausage._id}>
-                        <CardMedia component="img" sx={{ m: 1, p: 1 }} image={sausage.image} />
+                    <Grid item xs={12} sm={6} md={4} key={sausage._id}>
+                      <Card sx={{ my: 1, height: '100%', display: 'flex', flexDirection: 'column' }} elevation={6} >
+                        <CardMedia component="img" sx={{ m: 1, p: 1 }} 
+                        image={sausage.image} 
+                         />
                         <CardContent sx={{ flexGrow: 1 }}>
                           <Typography gutterBottom variant="h5" component="h2">{sausage.type}</Typography>
                           <Typography sx={{ mb: 2 }}><strong>Comments: </strong> {sausage.description}</Typography>
