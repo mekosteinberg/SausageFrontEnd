@@ -221,7 +221,7 @@ const App = () => {
                   return (
                     <Grid item xs={12} sm={6} md={4} key={sausage._id}>
                       <Card sx={{ my: 1, height: '100%', display: 'flex', flexDirection: 'column' }} elevation={6} >
-                        <CardMedia sx={{ m: 1, p: 1, maxWidth: 220 }}
+                        <CardMedia sx={{ m: 1, p: 1, maxWidth: 230 }}
                           component="img"
                           
                           image={sausage.image}
