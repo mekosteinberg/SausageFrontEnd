@@ -221,8 +221,11 @@ const App = () => {
                   return (
                     <Grid item xs={12} sm={6} md={4} key={sausage._id}>
                       <Card sx={{ my: 1, height: '100%', display: 'flex', flexDirection: 'column' }} elevation={6} >
-                        <CardMedia component="img" sx={{ m: 1, p: 1 }}
+                        <CardMedia sx={{ m: 1, p: 1, maxWidth: 220 }}
+                          component="img"
+                          
                           image={sausage.image}
+                          width="200"
                         />
                         <CardContent sx={{ flexGrow: 1 }}>
                           <Typography gutterBottom variant="h5" component="h2">{sausage.type}</Typography>
