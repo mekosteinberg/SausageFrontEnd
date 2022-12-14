@@ -197,8 +197,8 @@ const App = () => {
           >
             <Container maxWidth="sm">
               <Typography
-                component="h2"
-                variant="h2"
+                component="h3"
+                variant="h3"
                 align="center"
                 color="text.primary"
                 gutterBottom
@@ -206,24 +206,30 @@ const App = () => {
               <Typography variant="h5" align="center" color="text.secondary" paragraph>
                 Its Octoberfest! Everyone loves to take pics of their food, here's a way to rate your Octoberfest Feasts! Upload pics, say how it was and rate it 1-5 stars. Dont forget to check out the beverages section to find your perfect pairing!
               </Typography>
-              <Stack sx={{ pt: 4 }} direction="row" spacing={2} justifyContent="center" >
+              <Stack sx={{ p: 2 }} direction="row" spacing={2} justifyContent="center" >
                 <Button variant={areSausagesVisible ? "contained" : "outlined"} onClick={showSausages}>The Goods</Button>
                 <Button variant={isAddSausageVisible ? "contained" : "outlined"} onClick={showAddSausages}>Rate your own!</Button>
+
+              </Stack>
+              <Typography variant="h5" align="center" color="text.secondary" paragraph>
+                What goes better with brats than Beer? Find a brewery near you!
+              </Typography>
+              <Stack sx={{ p: 2 }} direction="row" spacing={2} justifyContent="center">
                 <Button variant={areDrinksVisible ? "contained" : "outlined"} onClick={showDrinks}>Perfect Pairings</Button>
               </Stack>
             </Container>
           </Box>
-          <Container sx={{ py: 8 }} maxWidth="md">
+          <Container maxWidth="md">
 
-            <Grid container spacing={4}>
+            <Grid container sx={{my:4}} spacing={4}>
+              <Typography variant="h5">The Goods</Typography>
               {areSausagesVisible
                 && sausages.map((sausage, index) => {
                   return (
                     <Grid item xs={12} sm={6} md={4} key={sausage._id}>
                       <Card sx={{ my: 1, height: '100%', display: 'flex', flexDirection: 'column' }} elevation={6} >
-                        <CardMedia sx={{ m: 1, p: 1, maxWidth: 220 }}
+                        <CardMedia sx={{ m: 1, p: 1, maxWidth: 230 }}
                           component="img"
-                          
                           image={sausage.image}
                           width="200"
                         />
@@ -259,7 +265,7 @@ const App = () => {
                     <Typography sx={{ mt: 2, p: 2 }} variant="h4"><strong>You BRAT your Sausage!</strong></Typography>
                     <form onSubmit={handleNewSausageFormSubmit}>
                       <TextField
-                        sx={{ m: 1, p: 1 }}
+                        sx={{ m: 1, p: 1, width: 300 }}
                         onChange={handleChange(setSausageType)}
                         id="outlined-basic"
                         label="Type of Meat"
@@ -317,23 +323,23 @@ const App = () => {
                 <Typography sx={{ mt: 2, p: 2 }} variant="h5"><strong>Edit</strong></Typography>
                 <form onSubmit={handleEditFormSubmit}>
                   <TextField
-                    sx={{ m: 1, p: 1 }}
+                    sx={{ m: 1, p: 1, width: 300 }}
                     onChange={handleChange(setSausageType)}
                     id="outlined-basic"
                     label="Type"
                     variant="outlined"
                     value={sausageType} />
                   <TextField
-                    sx={{ m: 1, p: 1 }}
+                    sx={{ m: 1, p: 1, width: 700 }}
                     onChange={handleChange(setSausageImage)}
                     id="outlined-basic"
                     label="image"
                     variant="outlined"
                     value={sausageImage} />
-                  <TextField sx={{ width: 500, m: 1, p: 1 }}
+                  <TextField sx={{ width: 700, m: 1, p: 1 }}
                     onChange={handleChange(setSausageComments)}
                     id="outlined-multiline-flexible"
-                    multiline maxRows={2}
+                    multiline maxRows={3}
                     label="Comments"
                     variant="outlined"
                     value={sausageComments} />
@@ -371,8 +377,7 @@ const App = () => {
               theme.palette.mode === 'light'
                 ? theme.palette.grey[400]
                 : theme.palette.grey[800],
-          }}
-        >
+          }}>
           <Container maxWidth="sm">
             <Typography variant="body1">
               Brought to you by A.Champion and M.Steinberg
