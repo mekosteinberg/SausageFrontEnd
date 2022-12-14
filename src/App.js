@@ -144,7 +144,7 @@ const App = () => {
             </Container>
           </Box>
           <Container maxWidth="md">
-
+          
             {areSausagesVisible
               && <SausageList sausages={sausages} onEditClick={editSausage} />}
 
@@ -155,6 +155,7 @@ const App = () => {
             }
 
             {isBrewSearchVisible && <BrewerySearch/>}
+
           </Container>
 
           <SausageModal
