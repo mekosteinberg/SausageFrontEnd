@@ -1,37 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { AppBar, Box, Button, Card, CardActions, CardContent, CardMedia, Container, FormGroup, Grid, Modal, Paper, Stack, TextField, Toolbar, Typography } from '@mui/material';
-import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
+import { AppBar, Box, Button, Container, Grid, Paper, Stack, Toolbar, Typography } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CameraIcon from '@mui/icons-material/PhotoCamera';
-import Rating from '@mui/material/Rating';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-
-//from MUI Modal docs
-const modalstyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 800,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 2,
-};
-
-//-----------------
-//Ratings portion of the Sausage Card
-//-----------------
-const getLabelText = (value) => `${value} Heart${value !== 1 ? 's' : ''}`
-const StyledRating = styled(Rating)({
-  '& .MuiRating-iconFilled': {
-    color: '#ff6d75',
-  },
-  '& .MuiRating-iconHover': {
-    color: '#ff3d47',
-  },
-});
+import SausageList from './SausageList';
+import SausageForm from './SausageForm';
+import SausageModal from './SausageModal';
+import BrewerySearch from './BrewerySearch';
 
 const client = axios.create({ baseURL: 'https://rate-my-brat-api.herokuapp.com/api' })
 
@@ -50,60 +25,36 @@ const App = () => {
   // Setup UseState
   //-----------------
   const [sausages, setSausages] = useState([])
-  const [addSausage, setAddSausage] = useState([])
-
-  const [sausageType, setSausageType] = useState('')
-  const [sausageImage, setSausageImage] = useState('')
-  const [sausageComments, setSausageComments] = useState('')
-  const [sausageId, setSausageId] = useState('')
-  const [sausageRatings, setSausageRatings] = useState('')
 
   //-----------------
   // NAV Buttons
   //-----------------
   const [areSausagesVisible, setAreSausagesVisible] = useState(true)
   const [isAddSausageVisible, setAddSausageVisible] = useState(false)
-  const [areDrinksVisible, setAreDrinksVisible] = useState(false)
+  const [isBrewSearchVisible, setBrewSearchVisible] = useState(false)
 
   const showSausages = () => {
     setAreSausagesVisible(true)
     setAddSausageVisible(false)
-    setAreDrinksVisible(false)
+    setBrewSearchVisible(false)
   }
   const showAddSausages = () => {
     setAreSausagesVisible(false)
     setAddSausageVisible(true)
-    setAreDrinksVisible(false)
+    setBrewSearchVisible(false)
   }
   const showDrinks = () => {
     setAreSausagesVisible(false)
     setAddSausageVisible(false)
-    setAreDrinksVisible(true)
+    setBrewSearchVisible(true)
   }
 
-  //Handle Change and Submit Forms/Buttons
-  const handleChange = (setState) => (event) => {
-    setState(event.target.value)
-  }
-
-  const handleNewSausageFormSubmit = (event) => {
-    // console.log('submit')
-    event.preventDefault()
+  const handleNewSausageFormSubmit = () => {
+    showSausages()
     client
-      .post('/sausages/new', {
-        image: sausageImage,
-        type: sausageType,
-        description: sausageComments,
-        ratings: sausageRatings
-      })
-      .then(() => {
-        resetForm()
-        showSausages()
-        client
-          .get('/sausages')
-          .then((response) => {
-            setSausages(response.data)
-          })
+      .get('/sausages')
+      .then((response) => {
+        setSausages(response.data)
       })
   }
 
@@ -111,69 +62,42 @@ const App = () => {
   //EDIT Sausage Input
   //----------------
   const [showModal, setShowModal] = useState(false)
-
-  const editSausage = (sausage) => () => {
+  const [sausage, setSausage] = useState({})
+  const editSausage = (sausageToEdit) => {
     setShowModal(true)
-    setSausageType(sausage.type)
-    setSausageImage(sausage.image)
-    setSausageComments(sausage.description)
-    setSausageRatings(sausage.ratings)
-    setSausageId(sausage._id)
+    setSausage(sausageToEdit)
   }
 
-  const handleEditFormSubmit = (event) => {
-    event.preventDefault(
-      client
-        .put('/sausages/' + sausageId, {
-          type: sausageType,
-          image: sausageImage,
-          description: sausageComments,
-          ratings: sausageRatings
-        })
-        .then(() => {
-          resetForm()
-          setShowModal(false)
-          client
-            .get('/sausages')
-            .then((response) => {
-              setSausages(response.data)
-            })
-        })
-    )
+  const handleEditFormSubmit = () => {
+    setShowModal(false)
+    client
+      .get('/sausages')
+      .then((response) => {
+        setSausages(response.data)
+      })
   }
 
   //----------------
   //DELETE Sausage Input
   //----------------
-  const deleteSausage = (event) => {
-    event.preventDefault()
+  const deleteSausage = () => {
     client
-      .delete('/sausages/' + sausageId)
-      .then(() => {
-        client
-          .get('/sausages')
-          .then((response) => {
-            setSausages(response.data)
-            showSausages()
-            setShowModal(false)
-          })
+      .get('/sausages')
+      .then((response) => {
+        setSausages(response.data)
+        showSausages()
+        setShowModal(false)
       })
   }
 
   //----------------
   //RESET Form Input
   //----------------
-  const resetForm = () => {
-    setSausageType('')
-    setSausageImage('')
-    setSausageComments('')
-    setSausageRatings('')
-  }
+
 
   useEffect(() => {
     client.get('/sausages').then((response) => {
       setSausages(response.data)
-      setAddSausage(response.data)
     })
   }, [])
 
@@ -215,158 +139,31 @@ const App = () => {
                 What goes better with brats than Beer? Find a brewery near you!
               </Typography>
               <Stack sx={{ p: 2 }} direction="row" spacing={2} justifyContent="center">
-                <Button variant={areDrinksVisible ? "contained" : "outlined"} onClick={showDrinks}>Perfect Pairings</Button>
+                <Button variant={isBrewSearchVisible ? "contained" : "outlined"} onClick={showDrinks}>Perfect Pairings</Button>
               </Stack>
             </Container>
           </Box>
           <Container maxWidth="md">
+          
+            {areSausagesVisible
+              && <SausageList sausages={sausages} onEditClick={editSausage} />}
 
-            <Grid container sx={{my:4}} spacing={4}>
-              <Typography variant="h5">The Goods</Typography>
-              {areSausagesVisible
-                && sausages.map((sausage, index) => {
-                  return (
-                    <Grid item xs={12} sm={6} md={4} key={sausage._id}>
-                      <Card sx={{ my: 1, height: '100%', display: 'flex', flexDirection: 'column' }} elevation={6} >
-                        <CardMedia sx={{ m: 1, p: 1, maxWidth: 230 }}
-                          component="img"
-                          image={sausage.image}
-                          width="200"
-                        />
-                        <CardContent sx={{ flexGrow: 1 }}>
-                          <Typography gutterBottom variant="h5" component="h2">{sausage.type}</Typography>
-                          <Typography sx={{ mb: 2 }}><strong>Comments: </strong> {sausage.description}</Typography>
-                          <Typography>{getLabelText(sausage.ratings)}</Typography>
-                          <StyledRating sx={{}}
-                            name="customized-color"
-                            value={sausage.ratings}
-                            getLabelText={getLabelText}
-                            precision={0.5}
-                            icon={<FavoriteIcon fontSize="inherit" />}
-                            emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-                            readOnly
-                          />
-                        </CardContent>
-                        <CardActions>
-                          <Button size="small" onClick={editSausage(sausage)}>Edit</Button>
-                        </CardActions>
-                      </Card>
-                    </Grid>
-                  )
-                }
-                )}
-            </Grid>
 
-            <Grid align="center">
-              {isAddSausageVisible
-                &&
-                <Paper align="left" sx={{ width: { sm: 750 }, m: 1 }} elevation={4}>
-                  <FormGroup>
-                    <Typography sx={{ mt: 2, p: 2 }} variant="h4"><strong>You BRAT your Sausage!</strong></Typography>
-                    <form onSubmit={handleNewSausageFormSubmit}>
-                      <TextField
-                        sx={{ m: 1, p: 1, width: 300 }}
-                        onChange={handleChange(setSausageType)}
-                        id="outlined-basic"
-                        label="Type of Meat"
-                        variant="outlined"
-                        value={sausageType} />
-                      <TextField sx={{ width: 700, m: 1, p: 1 }}
-                        onChange={handleChange(setSausageImage)}
-                        multiline maxRows={2}
-                        id="outlined-multiline-flexible"
-                        label="Image Link"
-                        variant="outlined"
-                        value={sausageImage} /><br />
-                      <TextField
-                        sx={{ width: 700, m: 1, p: 1 }}
-                        rows={4}
-                        multiline maxRows={8}
-                        onChange={handleChange(setSausageComments)}
-                        id="outlined-multiline-flexible"
-                        label="Comments"
-                        variant="outlined"
-                        value={sausageComments} /><br />
-                      <Typography sx={{ p: 2 }} variant="h6">Rating
-                        <StyledRating sx={{ p: 2 }}
-                          name="customized-color"
-                          onChange={handleChange(setSausageRatings)}
-                          defaultValue={2}
-                          getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
-                          precision={0.5}
-                          icon={<FavoriteIcon fontSize="inherit" />}
-                          emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-                          value={sausageRatings}
-                        />
-                      </Typography>
-                      <Button
-                        sx={{ m: 2 }}
-                        variant="contained"
-                        type="submit"
-                        color="success"
-                      >Submit your Meat</Button>
-                    </form>
-                  </FormGroup>
-                </Paper>
-              }
-            </Grid>
+            {isAddSausageVisible
+              &&
+              <SausageForm onSubmit={handleNewSausageFormSubmit} />
+            }
+
+            {isBrewSearchVisible && <BrewerySearch/>}
+
           </Container>
 
-          <Modal
+          <SausageModal
             open={showModal}
             onClose={() => { setShowModal(false) }}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={modalstyle}>
-              <FormGroup>
-                <Typography sx={{ mt: 2, p: 2 }} variant="h5"><strong>Edit</strong></Typography>
-                <form onSubmit={handleEditFormSubmit}>
-                  <TextField
-                    sx={{ m: 1, p: 1, width: 300 }}
-                    onChange={handleChange(setSausageType)}
-                    id="outlined-basic"
-                    label="Type"
-                    variant="outlined"
-                    value={sausageType} />
-                  <TextField
-                    sx={{ m: 1, p: 1, width: 700 }}
-                    onChange={handleChange(setSausageImage)}
-                    id="outlined-basic"
-                    label="image"
-                    variant="outlined"
-                    value={sausageImage} />
-                  <TextField sx={{ width: 700, m: 1, p: 1 }}
-                    onChange={handleChange(setSausageComments)}
-                    id="outlined-multiline-flexible"
-                    multiline maxRows={3}
-                    label="Comments"
-                    variant="outlined"
-                    value={sausageComments} />
-
-                  <Typography sx={{ p: 2 }} variant="h6">Rating
-                    <StyledRating sx={{ p: 2 }}
-                      name="customized-color"
-                      onChange={handleChange(setSausageRatings)}
-                      defaultValue={2}
-                      getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
-                      precision={0.5}
-                      icon={<FavoriteIcon fontSize="inherit" />}
-                      emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-                      value={sausageRatings}
-                    />
-                  </Typography>
-                  <Button
-                    sx={{ m: 2 }}
-                    variant="contained"
-                    type="submit"
-                    color="success"
-                  >Submit</Button>
-                  <Button size="small" onClick={deleteSausage}>Delete</Button>
-                </form>
-              </FormGroup>
-            </Box>
-          </Modal>
+            sausage={sausage}
+            onDelete={deleteSausage}
+            onSubmit={handleEditFormSubmit} />
 
         </main>
         <Box
