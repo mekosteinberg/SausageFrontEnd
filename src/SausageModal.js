@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import StyledRating from './StyledRating';
 import { Box, Button, FormGroup, Modal, TextField, Typography } from '@mui/material';
@@ -23,12 +23,20 @@ export default function SausageModal({ open,
     onClose, onSubmit, onDelete,
     sausage
 }) {
-    const sausageId = sausage._id
-    const [sausageType, setSausageType] = useState(sausage.type)
-    const [sausageImage, setSausageImage] = useState(sausage.image)
-    const [sausageComments, setSausageComments] = useState(sausage.description)
-    const [sausageRatings, setSausageRatings] = useState(sausage.ratings)
+    const [sausageId, setSausageId] = useState('')
+    const [sausageType, setSausageType] = useState('')
+    const [sausageImage, setSausageImage] = useState('')
+    const [sausageComments, setSausageComments] = useState('')
+    const [sausageRatings, setSausageRatings] = useState('')
 
+//Sets data in the modal to edit
+    useEffect(() => {
+        setSausageId(sausage._id)
+        setSausageType(sausage.type)
+        setSausageImage(sausage.image)
+        setSausageComments(sausage.description)
+        setSausageRatings(sausage.ratings)
+    }, [sausage])
     //Handle Change and Submit Forms/Buttons
     const handleChange = (setState) => (event) => {
         setState(event.target.value)
@@ -61,8 +69,8 @@ export default function SausageModal({ open,
                     ratings: sausageRatings
                 })
                 .then(() => {
-                    resetForm()
                     onSubmit()
+                    resetForm()
                 })
         )
     }

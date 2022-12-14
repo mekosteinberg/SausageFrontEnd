@@ -93,8 +93,6 @@ const App = () => {
   //----------------
   //RESET Form Input
   //----------------
-
-
   useEffect(() => {
     client.get('/sausages').then((response) => {
       setSausages(response.data)
@@ -136,15 +134,15 @@ const App = () => {
 
               </Stack>
               <Typography variant="h5" align="center" color="text.secondary" paragraph>
-                What goes better with brats than Beer? Find a brewery near you!
+                What goes better with brats than Beer? <br /> Find a brewery near you!
               </Typography>
-              <Stack sx={{ p: 2 }} direction="row" spacing={2} justifyContent="center">
-                <Button variant={isBrewSearchVisible ? "contained" : "outlined"} onClick={showDrinks}>Perfect Pairings</Button>
+              <Stack sx={{ p: 1 }} direction="row" spacing={2} justifyContent="center">
+                <Button variant={isBrewSearchVisible ? "contained" : "outlined"} onClick={showDrinks}>Brews for Brats</Button>
               </Stack>
             </Container>
           </Box>
           <Container maxWidth="md">
-          
+
             {areSausagesVisible
               && <SausageList sausages={sausages} onEditClick={editSausage} />}
 
@@ -154,7 +152,7 @@ const App = () => {
               <SausageForm onSubmit={handleNewSausageFormSubmit} />
             }
 
-            {isBrewSearchVisible && <BrewerySearch/>}
+            {isBrewSearchVisible && <BrewerySearch />}
 
           </Container>
 
