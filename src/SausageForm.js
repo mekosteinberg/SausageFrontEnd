@@ -18,6 +18,7 @@ export default function SausageForm({ onSubmit }) {
     const handleChange = (setState) => (event) => {
         setState(event.target.value)
     }
+    
     const resetForm = () => {
         setSausageType('')
         setSausageImage('')
