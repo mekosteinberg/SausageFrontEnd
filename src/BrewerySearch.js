@@ -151,7 +151,8 @@ export default function BrewerySearch() {
                             <Card sx={{ my: 1, height: '100%', display: 'flex', flexDirection: 'column' }} elevation={6} >
                                 <CardContent sx={{ flexGrow: 1 }}>
                                     <Typography gutterBottom variant="h5" component="h2">{brewery.name}</Typography>
-                                    <Typography sx={{ mb: 2 }}><strong>Address: </strong> {brewery.street}</Typography>
+                                    <Typography sx={{ mb: 2 }}><strong>Address: </strong></Typography>
+                                    <Typography sx={{ mb: 2 }}>{brewery.street}</Typography>
                                     <Typography sx={{ mb: 2 }}>{brewery.city}, {brewery.state}  {brewery.zipcode}</Typography>
                                 </CardContent>
                             </Card>
