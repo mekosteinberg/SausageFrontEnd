@@ -11,9 +11,19 @@ import BrewerySearch from './BrewerySearch';
 const client = axios.create({ baseURL: 'https://rate-my-brat-api.herokuapp.com/api' })
 
 //-----------------
-//Footer Theme
+//Theme
 //-----------------
-const theme = createTheme();
+const theme = createTheme(
+  {
+    palette: {
+      primary: {
+        main: '#00695c',
+      },
+      secondary: {
+        main: '#fb8c00',
+      },
+    },
+  });
 
 
 //-----------------
