@@ -5,6 +5,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import StyledRating from './StyledRating';
 
+
 const client = axios.create({ baseURL: 'https://rate-my-brat-api.herokuapp.com/api' })
 
 
@@ -18,7 +19,7 @@ export default function SausageForm({ onSubmit }) {
     const handleChange = (setState) => (event) => {
         setState(event.target.value)
     }
-    
+
     const resetForm = () => {
         setSausageType('')
         setSausageImage('')
