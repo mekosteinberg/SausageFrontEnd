@@ -1,12 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { AppBar, Box, Button, Container, Grid, Paper, Stack, Toolbar, Typography } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CameraIcon from '@mui/icons-material/PhotoCamera';
-import SausageList from './SausageList';
-import SausageForm from './SausageForm';
-import SausageModal from './SausageModal';
-import BrewerySearch from './BrewerySearch';
+import Rating from '@mui/material/Rating';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+
+//from MUI Modal docs
+const modalstyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 2,
+};
+
+//-----------------
+//Ratings portion of the Sausage Card
+//-----------------
+const getLabelText = (value) => `${value} Heart${value !== 1 ? 's' : ''}`
+const StyledRating = styled(Rating)({
+  '& .MuiRating-iconFilled': {
+    color: '#ff6d75',
+  },
+  '& .MuiRating-iconHover': {
+    color: '#ff3d47',
+  },
+});
 
 const client = axios.create({ baseURL: 'https://rate-my-brat-api.herokuapp.com/api' })
 
