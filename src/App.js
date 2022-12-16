@@ -123,7 +123,7 @@ const App = () => {
         </Paper>
 
         <main>
-          {/* Hero unit */}
+
           <Box
             sx={{ bgcolor: 'background.paper', pt: 8, pb: 6 }}
           >
