@@ -12,6 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from '../api/axios';
 
 function Copyright(props) {
   return (
@@ -29,6 +30,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -36,6 +38,13 @@ export default function SignIn() {
       email: data.get('email'),
       password: data.get('password'),
     });
+    axios.post(
+        'http://localhost:3000/api/login',
+        {
+            email: data.get('email'),
+            pwd: data.get('password')
+        }
+    )
   };
 
   return (
